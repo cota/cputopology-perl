@@ -116,7 +116,7 @@ sub threads_in_socket {
     }
 
     my @ret = ();
-    foreach my $core (keys %{ $sockets{$socket} }) {
+    foreach my $core (sort { $a <=> $b } keys %{ $sockets{$socket} }) {
 	for (my $i = 0; $i < $n; $i++) {
 	    my $thread_list = $sockets{$socket}->{$core};
 	    push @ret, $thread_list->[$i];
