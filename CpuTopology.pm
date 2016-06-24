@@ -22,6 +22,7 @@ our @EXPORT_OK = qw(
 	n_sockets
 	n_threads_per_core
 	threads_in_socket
+	sockets
 );
 
 my $sysfs_path = '/sys/devices/system/cpu';
@@ -123,6 +124,11 @@ sub threads_in_socket {
 	}
     }
     return @ret;
+}
+
+sub sockets {
+    _init();
+    return %sockets;
 }
 
 return 1;
