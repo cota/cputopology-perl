@@ -6,6 +6,8 @@
 use warnings;
 use strict;
 use Getopt::Long;
+use File::Basename;
+use lib dirname (__FILE__); # find CpuTopology regardless of what cwd is
 use CpuTopology;
 
 my %policies = (
