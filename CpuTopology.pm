@@ -5,7 +5,6 @@
 # - The system is a regular hierarchy of sockets->cores->threads. That is:
 #   + All sockets have the same amount of cores
 #   + All cores have the same amount of threads
-# - socket[0]->core[0] always exists
 # - sysfs exists
 #   + sysfs is mounted on /sys
 
@@ -67,10 +66,21 @@ sub get_cpus {
 # case by calling it you'll force a read of the topology.
 sub init {
     get_cpus();
+    my $sock;
     foreach my $id (@cpus) {
 	my $socket = read_param($id, 'physical_package_id');
 	my $core = read_param($id, 'core_id');
-	push @{ $sockets{$socket}->{$core} }, $id;
+	push @{ $sock->{$socket}->{$core} }, $id;
+    }
+    # clean up $sock, since socket/core id's might not be contiguous
+    my $i = 0;
+    foreach my $s (sort { $a <=> $b } keys %$sock) {
+	my $j = 0;
+	foreach my $c (sort { $a <=> $b } keys %{ $sock->{$s} }) {
+	    push @{ $sockets{$i}{$j} }, sort { $a <=> $b } @{ $sock->{$s}{$c} };
+	    $j++;
+	}
+	$i++;
     }
 }
 
